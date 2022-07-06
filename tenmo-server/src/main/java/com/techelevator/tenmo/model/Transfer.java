@@ -13,8 +13,7 @@ public class Transfer {
 
     public Transfer(){}
 
-    public Transfer(Long id, int toAccountId, int fromAccountId, BigDecimal transferAmount, int transferTypeId, int transferStatusId) {
-        this.id = id;
+    public Transfer(int toAccountId, int fromAccountId, BigDecimal transferAmount, int transferTypeId, int transferStatusId) {
         this.toAccountId = toAccountId;
         this.fromAccountId = fromAccountId;
         this.transferAmount = transferAmount;

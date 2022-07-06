@@ -1,11 +1,17 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDAO;
+<<<<<<< HEAD
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+=======
+import com.techelevator.tenmo.dao.TransferDao;
+import com.techelevator.tenmo.model.Transfer;
+import org.springframework.web.bind.annotation.*;
+>>>>>>> c2968a463247f9c16d77ee7c41cbc52706ef0afb
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,9 +21,11 @@ import java.util.List;
 public class TenmoController {
 
     private AccountDAO accountDAO;
+    private TransferDao transferDao;
 
-    public TenmoController(AccountDAO accountDAO) {
+    public TenmoController(AccountDAO accountDAO, TransferDao transferDao) {
         this.accountDAO = accountDAO;
+        this.transferDao = transferDao;
     }
 
 
@@ -42,9 +50,9 @@ public class TenmoController {
 
     }
 
-    @RequestMapping(path = "/{from}/send/{to}", method = RequestMethod.POST)
-    public void sendMoney(@PathVariable int from, @PathVariable int to) {
-
+    @RequestMapping(path = "/send", method = RequestMethod.POST)
+    public void sendMoney(@RequestBody Transfer transfer) {
+        transferDao.createTransfer(transfer);
     }
 
     @RequestMapping(path = "/{from}/request/{to}", method = RequestMethod.POST)

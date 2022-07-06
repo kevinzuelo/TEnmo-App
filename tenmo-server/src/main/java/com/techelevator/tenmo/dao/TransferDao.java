@@ -10,6 +10,8 @@ public interface TransferDao {
 
     Transfer getTransfer(int id);
 
+    List<Transfer> listTransfers(int id);
+
     Transfer createTransfer(Transfer transfer);
 
     String getTransferStatus(int id);
