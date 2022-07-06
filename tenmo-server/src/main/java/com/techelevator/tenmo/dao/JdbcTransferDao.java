@@ -19,6 +19,7 @@ public class JdbcTransferDao implements TransferDao{
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    // Returns transfer by id value
     @Override
     public Transfer getTransfer(int transferId) {
 
@@ -35,8 +36,9 @@ public class JdbcTransferDao implements TransferDao{
         return transfer;
     }
 
+    // Returns all transfers by user id
     @Override
-    public List<Transfer> listTransfers(int id) {
+    public List<Transfer> listTransfers(int userId) {
         List<Transfer> transfers = new ArrayList<>();
 
         String sql = "SELECT * " +
@@ -44,7 +46,7 @@ public class JdbcTransferDao implements TransferDao{
                 "JOIN account ON transfer.account_from = account.account_id AND transfer.account_to = account.account_id " +
                 "WHERE account.account_id = ?; ";
 
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
         while (results.next()) {
             transfers.add(mapRowToTransfer(results));
         }
@@ -52,9 +54,12 @@ public class JdbcTransferDao implements TransferDao{
     }
 
 
-
+    // Creates transfer
     @Override
     public Transfer createTransfer(Transfer transfer){
+
+        //Todo add 'if' statements to the create methods to prevent negative balance transfers
+        //Todo make sure that user id from fromAccount does not match the toAccount so users cannot add money from themselves to themselves
 
         // create a new transfer w/ unique id in transfer table
         String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +

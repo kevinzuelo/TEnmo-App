@@ -34,6 +34,7 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
+    //todo add to client side the ability to select the account to transfer to
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT user_id, username, password_hash FROM tenmo_user;";
