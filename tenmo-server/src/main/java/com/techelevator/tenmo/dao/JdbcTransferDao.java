@@ -3,10 +3,14 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import javax.sql.RowSet;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+@Component
 public class JdbcTransferDao implements TransferDao{
 
     private JdbcTemplate jdbcTemplate;
@@ -31,6 +35,22 @@ public class JdbcTransferDao implements TransferDao{
         return transfer;
     }
 
+    @Override
+    public List<Transfer> listTransfers(int id) {
+        List<Transfer> transfers = new ArrayList<>();
+
+        String sql = "SELECT * " +
+                "FROM transfer " +
+                "JOIN account ON transfer.account_from = account.account_id AND transfer.account_to = account.account_id " +
+                "WHERE account.account_id = ?; ";
+
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
+        while (results.next()) {
+            transfers.add(mapRowToTransfer(results));
+        }
+        return transfers;
+    }
+
 
 
     @Override
@@ -45,15 +65,15 @@ public class JdbcTransferDao implements TransferDao{
 
         // update "sending" account balance to subtract amount to transfer
         sql = "UPDATE account " +
-                "SET balance - amount " +
+                "SET balance = balance - (SELECT amount FROM transfer WHERE transfer_id = ?) " +
                 "WHERE account_id = ?;";
-        jdbcTemplate.update(sql, transfer.getFromAccountId());
+        jdbcTemplate.update(sql, transferId, transfer.getFromAccountId());
 
         //update "receiving" account balance to add amount to transfer
         sql = "UPDATE account " +
-                "SET balance + amount " +
+                "SET balance = balance + (SELECT amount FROM transfer WHERE transfer_id = ?) " +
                 "WHERE account_id = ?;";
-        jdbcTemplate.update(sql, transfer.getToAccountId());
+        jdbcTemplate.update(sql, transferId, transfer.getToAccountId());
 
         return getTransfer(transferId);
     }
