@@ -11,7 +11,7 @@ public interface UserDao {
 
     User findByUsername(String username);
 
-    String findUsernameById(Long id) throws IdNotFoundException;
+//    String findUsernameById(Long id) throws IdNotFoundException;
 
     int findIdByUsername(String username);
 

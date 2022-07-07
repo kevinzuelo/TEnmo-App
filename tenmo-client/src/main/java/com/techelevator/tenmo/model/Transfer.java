@@ -69,4 +69,5 @@ public class Transfer {
     public void setTransferStatusId(int transferStatusId) {
         this.transferStatusId = transferStatusId;
     }
+
 }

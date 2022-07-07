@@ -57,16 +57,19 @@ public class JdbcUserDao implements UserDao {
         throw new UsernameNotFoundException("User " + username + " was not found.");
     }
 
-    @Override
-    public String findUsernameById (Long id) throws IdNotFoundException {
-        String sql = "SELECT username FROM tenmo_user JOIN account ON tenmo_user.account_id = account.account_id WHERE user_id = ?;";
-        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id);
-        if (result.next()) {
-            return mapRowToUser(result).getUsername();
-        }
-        throw new IdNotFoundException();
-
-    }
+//    @Override
+//    public String findUsernameById (Long id) throws IdNotFoundException {
+//        String sql = "SELECT username " +
+//                "FROM tenmo_user " +
+//                "JOIN account ON tenmo_user.account_id = account.account_id " +
+//                "WHERE user_id = ?;";
+//        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id);
+//        if (result.next()) {
+//            return mapRowToUser(result).getUsername();
+//        }
+//        throw new IdNotFoundException();
+//
+//    }
 
     @Override
     public boolean create(String username, String password) {

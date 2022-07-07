@@ -45,18 +45,22 @@ public class TenmoController {
         return userDao.findAll();
     }
 
-    @RequestMapping(path = "/{id}/past_transfers", method = RequestMethod.GET)
-    public List<Transfer> getPastTransfers(@PathVariable int id) {
+    @RequestMapping(path = "/users/{id}", method = RequestMethod.GET)
+    public String getUserName(@PathVariable("id") int userId) {
+        return userDao;
+    }
 
-        return transferDao.listTransfers(id);
+    @RequestMapping(path = "/{id}/past_transfers", method = RequestMethod.GET)
+    public List<Transfer> getPastTransfers(@PathVariable("id") int userId) {
+
+        return transferDao.listTransfers(userId);
     }
 
     @RequestMapping(path = "/{id}/pending_requests", method = RequestMethod.GET)
-    public List<Transfer> getPendingTransfers(@PathVariable int id) {
+    public List<Transfer> getPendingTransfers(@PathVariable("id") int userId) {
         List<Transfer> transfers = new ArrayList<>();
 
         return transfers;
-
     }
 
     @RequestMapping(path = "/send", method = RequestMethod.POST)

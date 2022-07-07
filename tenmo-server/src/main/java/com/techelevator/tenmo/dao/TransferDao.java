@@ -17,4 +17,6 @@ public interface TransferDao {
     Transfer createTransfer(Transfer transfer) throws InvalidAccountException, InsufficientFundsException;
 
     String getTransferStatus(int id);
+
+    String getUserNameFromId(int transferId, String currentUser);
 }

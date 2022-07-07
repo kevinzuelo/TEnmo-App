@@ -3,6 +3,7 @@ package com.techelevator.tenmo.services;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.util.BasicLogger;
+import io.cucumber.java.bs.A;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
@@ -42,15 +43,24 @@ public class TenmoService {
     }
 
 
-    public List<Transfer> listTransferHistory (Long id) {
-        List<Transfer> transfers = new ArrayList<>();
+    public Transfer[] listTransferHistory (Long id) {
+        Transfer[] transfers = null;
         try {
-            transfers = restTemplate.getForObject(API_BASE_URL + id + "/past_transfers", List.class);
+            transfers = restTemplate.getForObject(API_BASE_URL + id + "/past_transfers", Transfer[].class);
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return transfers;
     }
 
+    public User getUserNameFromId(int userId) {
+        User user = null;
+        try {
+            user = restTemplate.getForObject(API_BASE_URL + "users/" + userId, User.class);
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return user;
+    }
 
 }

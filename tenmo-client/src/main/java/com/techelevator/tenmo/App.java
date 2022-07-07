@@ -106,13 +106,13 @@ public class App {
     }
 
 	private void viewTransferHistory() {
-        System.out.println("-------------------------------------------\n" + "Transfers\n" + "From/To     Amount\n" + "-------------------------------------------");
+        System.out.println("-------------------------------------------\n" + "Transfers\n" +"ID     From/To     Amount\n" + "-------------------------------------------");
         for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
             if (transfer.getTransferTypeId() == 2) {
-                System.out.println(transfer.getId() + "    " + "To:" + "          " + transfer.getTransferAmount());
+                System.out.println(transfer.getId() + "   " + "To: " + tenmoService.getUserNameFromId(transfer.getToAccountId()) + "      " +  transfer.getTransferAmount());
             }
             else {
-                System.out.println(transfer.getId() + "    " + "From:" + "          " + transfer.getTransferAmount());
+                System.out.println(transfer.getId() + "   " + "From: " + tenmoService.getUserNameFromId(transfer.getFromAccountId()) + "          " + transfer.getTransferAmount());
             }
 
         }
@@ -126,7 +126,7 @@ public class App {
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
+
 		
 	}
 

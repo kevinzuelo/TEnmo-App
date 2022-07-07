@@ -122,6 +122,15 @@ public class JdbcTransferDao implements TransferDao{
 
     }
 
+    public String getUserNameFromId(int transferId, String currentUser) {
+        String sql = "SELECT username " +
+                        "FROM tenmo_user " +
+                        "JOIN account ON tenmo_user.user_id = account.user_id " +
+                        "JOIN transfer ON account.account_id = transfer.account_from OR  account.account_id = transfer.account_to " +
+                        "WHERE transfer_id = ? AND username <> ?;";
+        return jdbcTemplate.queryForObject(sql, String.class, transferId, currentUser);
+    }
+
     private Transfer mapRowToTransfer(SqlRowSet rs) {
 
         Transfer transfer = new Transfer();
