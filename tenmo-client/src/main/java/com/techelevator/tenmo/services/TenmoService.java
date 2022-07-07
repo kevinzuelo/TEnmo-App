@@ -53,14 +53,14 @@ public class TenmoService {
         return transfers;
     }
 
-    public User getUserNameFromId(int userId) {
-        User user = null;
+    public String getUserNameFromId(int userId) {
+        String username = "";
         try {
-            user = restTemplate.getForObject(API_BASE_URL + "users/" + userId, User.class);
+            username = restTemplate.getForObject(API_BASE_URL + "users/" + userId, String.class);
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
-        return user;
+        return username;
     }
 
 }

@@ -2,6 +2,7 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDAO;
 
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,8 +47,22 @@ public class TenmoController {
     }
 
     @RequestMapping(path = "/users/{id}", method = RequestMethod.GET)
-    public String getUserName(@PathVariable("id") int userId) {
-        return userDao;
+    public String getUserName(@PathVariable("id") int fromID) {
+        List<Account> accountList = accountDAO.findAll();
+        List<User> userList = userDao.findAll();
+        int from = 0;
+        for(Account account : accountList) {
+            if(account.getAccountID() == fromID){
+                from = account.getUserID();
+            }
+        }
+
+        for(User user : userList) {
+            if(user.getId() == from) {
+                return user.getUsername();
+            }
+        }
+        return null;
     }
 
     @RequestMapping(path = "/{id}/past_transfers", method = RequestMethod.GET)
