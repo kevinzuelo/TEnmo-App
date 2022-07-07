@@ -29,9 +29,8 @@ public class TenmoController {
 
     @RequestMapping(path = "/{id}/past_transfers", method = RequestMethod.GET)
     public List<Transfer> getPastTransfers(@PathVariable int id) {
-        List<Transfer> transfers = new ArrayList<>();
 
-        return transfers;
+        return transferDao.listTransfers(id);
     }
 
     @RequestMapping(path = "/{id}/pending_requests", method = RequestMethod.GET)
