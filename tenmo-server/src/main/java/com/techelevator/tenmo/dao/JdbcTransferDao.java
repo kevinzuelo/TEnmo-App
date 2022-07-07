@@ -55,7 +55,6 @@ public class JdbcTransferDao implements TransferDao{
 
 
     // Creates transfer
->>>>>>> de10ed342743e2d3ade3b8a78571c4cd845c0ca6
     @Override
     public Transfer createTransfer(Transfer transfer){
 
