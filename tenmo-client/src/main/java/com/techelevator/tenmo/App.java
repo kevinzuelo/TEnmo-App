@@ -1,9 +1,11 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.TenmoService;
 
 public class App {
 
@@ -11,8 +13,11 @@ public class App {
 
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
+    private final TenmoService tenmoService = new TenmoService();
 
     private AuthenticatedUser currentUser;
+
+
 
     public static void main(String[] args) {
         App app = new App();
@@ -75,6 +80,8 @@ public class App {
                 sendBucks();
             } else if (menuSelection == 5) {
                 requestBucks();
+            } else if (menuSelection == 6) {
+                listUsers();
             } else if (menuSelection == 0) {
                 continue;
             } else {
@@ -85,10 +92,16 @@ public class App {
     }
 
 	private void viewCurrentBalance() {
-		// TODO Auto-generated method stub
 
-		
 	}
+
+    private void listUsers() {
+        System.out.println("-------------------------------------------\n" + "Users\n" + "ID     Name\n" + "-------------------------------------------");
+        for (User user : tenmoService.listAllUsers()) {
+            System.out.println(user.getId() + "    " + user.getUsername());
+        }
+        System.out.println("-------------------------------------------\n");
+    }
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
