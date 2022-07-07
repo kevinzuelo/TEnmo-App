@@ -111,7 +111,6 @@ public class JdbcTransferDao implements TransferDao{
     public boolean validateFunds(Transfer transfer) {
         String sql = "SELECT DISTINCT balance " +
                 "FROM account " +
-                "JOIN transfer ON transfer.account_from = account.account_id " +
                 "WHERE account_id = ?;" ;
 
         BigDecimal balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, transfer.getFromAccountId());

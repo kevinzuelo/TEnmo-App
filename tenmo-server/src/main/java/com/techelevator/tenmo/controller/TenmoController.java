@@ -34,10 +34,10 @@ public class TenmoController {
         this.userDao = userDao;
     }
 
-    @RequestMapping(path = "/", method = RequestMethod.GET)
-    public BigDecimal getBalance(@PathVariable int id) {
+    @RequestMapping(path = "/{id}/balance", method = RequestMethod.GET)
+    public BigDecimal getBalance(@PathVariable("id") int userId) {
 
-        return accountDAO.getBalance(id);
+        return accountDAO.getBalance(userId);
     }
 
     @RequestMapping(path = "/users", method = RequestMethod.GET)
