@@ -1,6 +1,8 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
+import exceptions.InsufficientFundsException;
+import exceptions.InvalidAccountException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -56,43 +58,25 @@ public class JdbcTransferDao implements TransferDao{
 
     // Creates transfer
     @Override
-    public Transfer createTransfer(Transfer transfer){
+    public Transfer createTransfer(Transfer transfer) throws InvalidAccountException, InsufficientFundsException {
 
-        //Todo add 'if' statements to the create methods to prevent negative balance transfers
+         if (transfer.getFromAccountId() == transfer.getToAccountId()) {
+             throw new InvalidAccountException();
+         }
 
-        // Start of code that makes sense to me:
-        //
-        //         if (transfer.getFromAccountId() == transfer.getToAccountId()) {
-        //            return null;
-        //        }
+         if(validateFunds(transfer)) {
+             // create a new transfer w/ unique id in transfer table
+             String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                     "VALUES (?, ?, ?, ?, ?) RETURNING transfer_id;";
 
-        //Todo make sure that user id from fromAccount does not match the toAccount so users cannot add money from themselves to themselves
+             Integer transferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(),
+                     transfer.getTransferStatusId(), transfer.getFromAccountId(), transfer.getToAccountId(), transfer.getTransferAmount());
 
-        // How do we see the balance? any time the balance transfer.getFromAccountId() >= 0 it shouldn't be transferred. Unsure...
-
-
-        // create a new transfer w/ unique id in transfer table
-        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
-                "VALUES (?, ?, ?, ?, ?) RETURNING transfer_id;";
-
-        Integer transferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(),
-                transfer.getTransferStatusId(), transfer.getFromAccountId(), transfer.getToAccountId(), transfer.getTransferAmount());
-
-
-        // update "sending" account balance to subtract amount to transfer
-        sql = "UPDATE account " +
-                "SET balance = balance - (SELECT amount FROM transfer WHERE transfer_id = ?) " +
-                "WHERE account_id = ?;";
-        jdbcTemplate.update(sql, transferId, transfer.getFromAccountId());
-
-
-        //update "receiving" account balance to add amount to transfer
-        sql = "UPDATE account " +
-                "SET balance = balance + (SELECT amount FROM transfer WHERE transfer_id = ?) " +
-                "WHERE account_id = ?;";
-        jdbcTemplate.update(sql, transferId, transfer.getToAccountId());
-
-        return getTransfer(transferId);
+             updateFromAccount(transferId, transfer.getFromAccountId());
+             updateToAccount(transferId, transfer.getToAccountId());
+             return getTransfer(transferId);
+         }
+         throw new InsufficientFundsException();
     }
 
 
@@ -108,6 +92,36 @@ public class JdbcTransferDao implements TransferDao{
 
     }
 
+    public void updateToAccount(int transferID, int accountID) {
+        //update "receiving" account balance to add amount to transfer
+        String sql = "UPDATE account " +
+                "SET balance = balance + (SELECT amount FROM transfer WHERE transfer_id = ?) " +
+                "WHERE account_id = ?;";
+        jdbcTemplate.update(sql, transferID, accountID);
+    }
+
+    public void updateFromAccount(int transferID, int accountID) {
+        // update "sending" account balance to subtract amount to transfer
+        String sql = "UPDATE account " +
+                "SET balance = balance - (SELECT amount FROM transfer WHERE transfer_id = ?) " +
+                "WHERE account_id = ?;";
+        jdbcTemplate.update(sql, transferID, accountID);
+    }
+
+    public boolean validateFunds(Transfer transfer) {
+        String sql = "SELECT DISTINCT balance " +
+                "FROM account " +
+                "JOIN transfer ON transfer.account_from = account.account_id " +
+                "WHERE account_id = ?;" ;
+
+        BigDecimal balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, transfer.getFromAccountId());
+
+        if(transfer.getTransferAmount().compareTo(balance) == 1) {
+            return false;
+        }
+        return true;
+
+    }
 
     private Transfer mapRowToTransfer(SqlRowSet rs) {
 

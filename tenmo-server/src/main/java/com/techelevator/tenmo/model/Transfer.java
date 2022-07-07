@@ -1,24 +1,25 @@
 package com.techelevator.tenmo.model;
 
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 
 public class Transfer {
 
     private Long id;
+    @DecimalMin(value = "0.01", inclusive = true)
     private BigDecimal transferAmount;
     private int toAccountId;
     private int fromAccountId;
     private int transferTypeId;
-    private int transferStatusId;
+    private int transferStatusId = 2;
 
     public Transfer(){}
 
-    public Transfer(int toAccountId, int fromAccountId, BigDecimal transferAmount, int transferTypeId, int transferStatusId) {
+    public Transfer(int toAccountId, int fromAccountId, BigDecimal transferAmount, int transferTypeId) {
         this.toAccountId = toAccountId;
         this.fromAccountId = fromAccountId;
         this.transferAmount = transferAmount;
         this.transferTypeId = transferTypeId;
-        this.transferStatusId = transferStatusId;
     }
 
     public BigDecimal getTransferAmount() {
