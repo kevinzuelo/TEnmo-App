@@ -59,7 +59,17 @@ public class JdbcTransferDao implements TransferDao{
     public Transfer createTransfer(Transfer transfer){
 
         //Todo add 'if' statements to the create methods to prevent negative balance transfers
+
+        // Start of code that makes sense to me:
+        //
+        //         if (transfer.getFromAccountId() == transfer.getToAccountId()) {
+        //            return null;
+        //        }
+
         //Todo make sure that user id from fromAccount does not match the toAccount so users cannot add money from themselves to themselves
+
+        // How do we see the balance? any time the balance transfer.getFromAccountId() >= 0 it shouldn't be transferred. Unsure...
+
 
         // create a new transfer w/ unique id in transfer table
         String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
@@ -68,11 +78,13 @@ public class JdbcTransferDao implements TransferDao{
         Integer transferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(),
                 transfer.getTransferStatusId(), transfer.getFromAccountId(), transfer.getToAccountId(), transfer.getTransferAmount());
 
+
         // update "sending" account balance to subtract amount to transfer
         sql = "UPDATE account " +
                 "SET balance = balance - (SELECT amount FROM transfer WHERE transfer_id = ?) " +
                 "WHERE account_id = ?;";
         jdbcTemplate.update(sql, transferId, transfer.getFromAccountId());
+
 
         //update "receiving" account balance to add amount to transfer
         sql = "UPDATE account " +
