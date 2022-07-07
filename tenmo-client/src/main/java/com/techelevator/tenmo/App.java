@@ -1,6 +1,7 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
@@ -92,7 +93,8 @@ public class App {
     }
 
 	private void viewCurrentBalance() {
-
+        System.out.println();
+        System.out.println("Your current account balance is: " + tenmoService.getBalance(currentUser.getUser().getId()));
 	}
 
     private void listUsers() {
@@ -104,7 +106,17 @@ public class App {
     }
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
+        System.out.println("-------------------------------------------\n" + "Transfers\n" + "From/To     Amount\n" + "-------------------------------------------");
+        for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
+            if (transfer.getTransferTypeId() == 2) {
+                System.out.println(transfer.getId() + "    " + "To:" + "          " + transfer.getTransferAmount());
+            }
+            else {
+                System.out.println(transfer.getId() + "    " + "From:" + "          " + transfer.getTransferAmount());
+            }
+
+        }
+        System.out.println("---------\n");
 		
 	}
 
