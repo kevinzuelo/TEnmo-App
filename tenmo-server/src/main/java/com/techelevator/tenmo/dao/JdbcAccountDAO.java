@@ -6,7 +6,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-<<<<<<< HEAD
 
 @Component
 public class JdbcAccountDAO implements AccountDAO{

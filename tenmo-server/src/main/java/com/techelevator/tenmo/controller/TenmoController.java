@@ -1,17 +1,17 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDAO;
-<<<<<<< HEAD
+
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-=======
+
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.web.bind.annotation.*;
->>>>>>> c2968a463247f9c16d77ee7c41cbc52706ef0afb
+
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
