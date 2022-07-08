@@ -4,6 +4,9 @@ import com.techelevator.tenmo.dao.AccountDAO;
 
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
+import org.apache.logging.log4j.message.Message;
+import org.springframework.http.HttpMessage;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +48,11 @@ public class TenmoController {
     @RequestMapping(path = "/users", method = RequestMethod.GET)
     public List<User> listUsers() {
         return userDao.findAll();
+    }
+
+    @RequestMapping(path = "/transfer/{id}", method = RequestMethod.GET)
+    public Transfer getTransferByID (@PathVariable("id") int transferID) {
+        return transferDao.getTransfer(transferID);
     }
 
     @RequestMapping(path = "/users/{id}", method = RequestMethod.GET)
@@ -95,9 +103,15 @@ public class TenmoController {
         transferDao.createTransfer(transfer);
     }
 
-    @RequestMapping(path = "/{from}/request/{to}", method = RequestMethod.POST)
-    public void requestMoney(@PathVariable int from, @PathVariable int to) {
+    @RequestMapping(path = "/request", method = RequestMethod.POST)
+    public void requestMoney(@Valid @RequestBody Transfer transfer) throws InvalidAccountException, InsufficientFundsException {
+        transfer.setTransferStatusId(1);
+        transferDao.createTransfer(transfer);
+    }
 
+    @RequestMapping(path = "/update/{id}", method = RequestMethod.PUT)
+    public void updateTransfer(@Valid @RequestBody Transfer transfer, @PathVariable("id") int transferID) throws InvalidAccountException {
+        transferDao.updateTransfer(transfer, transferID);
     }
 
 

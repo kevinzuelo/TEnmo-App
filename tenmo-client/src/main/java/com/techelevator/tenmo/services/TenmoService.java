@@ -58,6 +58,40 @@ public class TenmoService {
         return newTransfer;
     }
 
+    public Transfer requestMoney(Transfer transfer) {
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
+        Transfer newTransfer = null;
+        try {
+            newTransfer = restTemplate.postForObject(API_BASE_URL  + "/request", entity, Transfer.class);
+
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return newTransfer;
+    }
+
+    public void updateTransfer(Transfer transfer) {
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
+        try {
+            restTemplate.put(API_BASE_URL  + "/update/" + transfer.getId(), entity);
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+    }
+
+    public Transfer getTransferByID(long transferID) {
+        try {
+            return restTemplate.getForObject(API_BASE_URL  + "/transfer/" + transferID, Transfer.class);
+
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return null;
+    }
+
+
 
     public Transfer[] listTransferHistory (Long id) {
         Transfer[] transfers = null;

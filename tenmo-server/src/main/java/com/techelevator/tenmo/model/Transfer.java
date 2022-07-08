@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public class Transfer {
 
-    private Long id;
+    private int id;
     @DecimalMin(value = "0.01", inclusive = true)
     private BigDecimal transferAmount;
     private int toAccountId;
@@ -50,11 +50,11 @@ public class Transfer {
         return transferTypeId;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

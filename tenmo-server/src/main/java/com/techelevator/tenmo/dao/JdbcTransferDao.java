@@ -64,20 +64,50 @@ public class JdbcTransferDao implements TransferDao{
              throw new InvalidAccountException();
          }
 
-         if(validateFunds(transfer)) {
-             // create a new transfer w/ unique id in transfer table
-             String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
-                     "VALUES (?, ?, ?, ?, ?) RETURNING transfer_id;";
+        if (validateFunds(transfer, transfer.getFromAccountId())) {
+            // create a new transfer w/ unique id in transfer table
+            String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                    "VALUES (?, ?, ?, ?, ?) RETURNING transfer_id;";
 
-             Integer transferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(),
-                     transfer.getTransferStatusId(), transfer.getFromAccountId(), transfer.getToAccountId(), transfer.getTransferAmount());
+            Integer transferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(),
+                    transfer.getTransferStatusId(), transfer.getFromAccountId(), transfer.getToAccountId(), transfer.getTransferAmount());
 
-             updateFromAccount(transferId, transfer.getFromAccountId());
-             updateToAccount(transferId, transfer.getToAccountId());
-             return getTransfer(transferId);
-         }
-         throw new InsufficientFundsException();
+            if (transfer.getTransferStatusId() == 2) {
+                updateFromAccount(transferId, transfer.getFromAccountId());
+                updateToAccount(transferId, transfer.getToAccountId());
+            }
+            return getTransfer(transferId);
+        }
+        System.out.println("Insufficient funds for transfer.");
+        throw new InsufficientFundsException();
+
+
+
     }
+
+    @Override
+    public void updateTransfer(Transfer transfer, int transferID) throws InvalidAccountException {
+
+        if (transfer.getFromAccountId() == transfer.getToAccountId()) {
+            throw new InvalidAccountException();
+        }
+
+        if(validateFunds(transfer, transfer.getToAccountId())) {
+            transfer.setTransferStatusId(2);
+            transfer.setTransferTypeId(2);
+
+            String sql = "UPDATE transfer SET transfer_type_id = ?, transfer_status_id = ? " +
+                    "WHERE transfer_id = ?;";
+
+             jdbcTemplate.update(sql, transfer.getTransferTypeId(), transfer.getTransferStatusId(), transferID);
+
+            if(transfer.getTransferStatusId() == 2) {
+                updateFromAccount(transferID, transfer.getFromAccountId());
+                updateToAccount(transferID, transfer.getToAccountId());
+            }
+        }
+    }
+
 
 
 
@@ -108,12 +138,12 @@ public class JdbcTransferDao implements TransferDao{
         jdbcTemplate.update(sql, transferID, accountID);
     }
 
-    public boolean validateFunds(Transfer transfer) {
+    public boolean validateFunds(Transfer transfer, int transferAccountID) {
         String sql = "SELECT DISTINCT balance " +
                 "FROM account " +
                 "WHERE account_id = ?;" ;
 
-        BigDecimal balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, transfer.getFromAccountId());
+        BigDecimal balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, transferAccountID);
 
         if(transfer.getTransferAmount().compareTo(balance) == 1) {
             return false;
@@ -135,7 +165,7 @@ public class JdbcTransferDao implements TransferDao{
 
         Transfer transfer = new Transfer();
 
-        transfer.setId(rs.getLong("transfer_id"));
+        transfer.setId(rs.getInt("transfer_id"));
         transfer.setToAccountId(rs.getInt("account_to"));
         transfer.setFromAccountId(rs.getInt("account_from"));
         transfer.setTransferAmount(rs.getBigDecimal("amount"));

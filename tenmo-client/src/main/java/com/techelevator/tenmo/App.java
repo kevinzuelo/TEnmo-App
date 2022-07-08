@@ -131,17 +131,27 @@ public class App {
         for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
             if (transfer.getTransferStatusId() == 1) {
                 if(currentUser.getUser().getId() == tenmoService.getUserIDFromAccount(transfer.getFromAccountId())) {
-                    System.out.println(transfer.getId() + "   " + "To: " + tenmoService.getUserNameFromId(transfer.getToAccountId()) + "      " +  transfer.getTransferAmount());
+                    System.out.println(transfer.getId() + "   " + "From: " + tenmoService.getUserNameFromId(transfer.getToAccountId()) + "      " +  transfer.getTransferAmount());
 
                 }
                 else {
-                    System.out.println(transfer.getId() + "   " + "From: " + tenmoService.getUserNameFromId(transfer.getFromAccountId()) + "          " + transfer.getTransferAmount());
+                    System.out.println(transfer.getId() + "   " + "To: " + tenmoService.getUserNameFromId(transfer.getFromAccountId()) + "          " + transfer.getTransferAmount());
                 }
+            }
+            else if (transfer.getTransferStatusId() != 1){
+                continue;
             }
             else {
                 System.out.println("You have no pending transfers.");
-                break;
             }
+
+        }
+        int pendingIDChoice = consoleService.promptForInt("Please enter transfer ID to approve/reject (0 to cancel).");
+        consoleService.printAcceptMenu();
+        int acceptTransferChoice = consoleService.promptForInt("Please choose an option: ");
+
+        if(acceptTransferChoice == 1) {
+            tenmoService.updateTransfer(tenmoService.getTransferByID(pendingIDChoice));
         }
 		
 	}
@@ -160,7 +170,16 @@ public class App {
 	}
 
 	private void requestBucks() {
-		// TODO Auto-generated method stub
+        listUsers();
+
+        int toUserID = consoleService.promptForInt("Please Enter a User ID");
+        BigDecimal amount = consoleService.promptForBigDecimal("Please enter the amount you would like to request");
+        int fromAccount = tenmoService.getAccountIDFromUserID(currentUser.getUser().getId());
+        int toAccount = tenmoService.getAccountIDFromUserID(toUserID);
+
+        Transfer transfer = new Transfer(toAccount, fromAccount, amount, 1);
+        transfer.setTransferStatusId(1);
+        tenmoService.requestMoney(transfer);
 		
 	}
 
