@@ -4,6 +4,7 @@ import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.util.BasicLogger;
 import io.cucumber.java.bs.A;
+import io.cucumber.java.sl.In;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
@@ -61,6 +62,16 @@ public class TenmoService {
             BasicLogger.log(e.getMessage());
         }
         return username;
+    }
+
+    public int getUserIDFromAccount(int accountID) {
+        int ID = 0;
+        try {
+            ID = restTemplate.getForObject(API_BASE_URL + "account/" + accountID, int.class);
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return ID;
     }
 
 }

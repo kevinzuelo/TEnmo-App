@@ -11,7 +11,7 @@ public class Transfer {
     private int toAccountId;
     private int fromAccountId;
     private int transferTypeId;
-    private int transferStatusId = 2;
+    private int transferStatusId;
 
     public Transfer(){}
 

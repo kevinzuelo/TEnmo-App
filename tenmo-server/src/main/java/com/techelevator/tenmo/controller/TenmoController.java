@@ -4,6 +4,7 @@ import com.techelevator.tenmo.dao.AccountDAO;
 
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,6 +66,11 @@ public class TenmoController {
         return null;
     }
 
+    @RequestMapping(path = "/account/{id}", method = RequestMethod.GET)
+    public int getUserIDByAccountID (@PathVariable("id") int accountID) {
+        return accountDAO.getUserId(accountID);
+    }
+
     @RequestMapping(path = "/{id}/past_transfers", method = RequestMethod.GET)
     public List<Transfer> getPastTransfers(@PathVariable("id") int userId) {
 
@@ -80,6 +86,7 @@ public class TenmoController {
 
     @RequestMapping(path = "/send", method = RequestMethod.POST)
     public void sendMoney(@Valid @RequestBody Transfer transfer) throws InvalidAccountException, InsufficientFundsException {
+        transfer.setTransferStatusId(2);
         transferDao.createTransfer(transfer);
     }
 
