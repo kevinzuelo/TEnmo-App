@@ -13,5 +13,5 @@ public interface AccountDAO {
 
     public int getUserId(int fromAccountID);
 
-    public int getAccountId(int fromAccountID);
+    public int getAccountId(int userID);
 }

@@ -8,6 +8,8 @@ import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
 import com.techelevator.tenmo.services.TenmoService;
 
+import java.math.BigDecimal;
+
 public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
@@ -108,7 +110,7 @@ public class App {
 	private void viewTransferHistory() {
         System.out.println("-------------------------------------------\n" + "Transfers\n" +"ID     From/To     Amount\n" + "-------------------------------------------");
         for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
-            if (transfer.getTransferStatusId() == 2) {
+            if (transfer.getTransferStatusId() != 1) {
                 if(currentUser.getUser().getId() == tenmoService.getUserIDFromAccount(transfer.getFromAccountId())) {
                     System.out.println(transfer.getId() + "   " + "To: " + tenmoService.getUserNameFromId(transfer.getToAccountId()) + "      " +  transfer.getTransferAmount());
 
@@ -125,13 +127,36 @@ public class App {
 	}
 
 	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
+        System.out.println("-------------------------------------------\n" + "Transfers\n" +"ID     From/To     Amount\n" + "-------------------------------------------");
+        for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
+            if (transfer.getTransferStatusId() == 1) {
+                if(currentUser.getUser().getId() == tenmoService.getUserIDFromAccount(transfer.getFromAccountId())) {
+                    System.out.println(transfer.getId() + "   " + "To: " + tenmoService.getUserNameFromId(transfer.getToAccountId()) + "      " +  transfer.getTransferAmount());
+
+                }
+                else {
+                    System.out.println(transfer.getId() + "   " + "From: " + tenmoService.getUserNameFromId(transfer.getFromAccountId()) + "          " + transfer.getTransferAmount());
+                }
+            }
+            else {
+                System.out.println("You have no pending transfers.");
+                break;
+            }
+        }
 		
 	}
 
 	private void sendBucks() {
+        listUsers();
 
-		
+        int toUserID = consoleService.promptForInt("Please Enter a User ID");
+        BigDecimal amount = consoleService.promptForBigDecimal("Please enter the amount you would like to send");
+        int fromAccount = tenmoService.getAccountIDFromUserID(currentUser.getUser().getId());
+        int toAccount = tenmoService.getAccountIDFromUserID(toUserID);
+
+        Transfer transfer = new Transfer(toAccount, fromAccount, amount, 2);
+        transfer.setTransferStatusId(2);
+        tenmoService.sendMoney(transfer);
 	}
 
 	private void requestBucks() {

@@ -5,7 +5,9 @@ import com.techelevator.tenmo.model.User;
 import com.techelevator.util.BasicLogger;
 import io.cucumber.java.bs.A;
 import io.cucumber.java.sl.In;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -43,6 +45,19 @@ public class TenmoService {
         return balance;
     }
 
+    public Transfer sendMoney(Transfer transfer) {
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
+        Transfer newTransfer = null;
+        try {
+           newTransfer = restTemplate.postForObject(API_BASE_URL  + "/send", entity, Transfer.class);
+
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return newTransfer;
+    }
+
 
     public Transfer[] listTransferHistory (Long id) {
         Transfer[] transfers = null;
@@ -67,7 +82,17 @@ public class TenmoService {
     public int getUserIDFromAccount(int accountID) {
         int ID = 0;
         try {
-            ID = restTemplate.getForObject(API_BASE_URL + "account/" + accountID, int.class);
+            ID = restTemplate.getForObject(API_BASE_URL + "account/" + accountID, Integer.class);
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return ID;
+    }
+
+    public int getAccountIDFromUserID(long userID) {
+        int ID = 0;
+        try {
+            ID = restTemplate.getForObject(API_BASE_URL + "users/account/" + userID, Integer.class);
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
