@@ -101,8 +101,8 @@ public class JdbcTransferDao implements TransferDao{
 
             jdbcTemplate.update(sql, transfer.getTransferTypeId(), transfer.getTransferStatusId(), transfer.getId());
 
-            updateFromAccount(transfer.getId(), transfer.getFromAccountId());
-            updateToAccount(transfer.getId(), transfer.getToAccountId());
+            updateFromAccount(transfer.getId(), transfer.getToAccountId());
+            updateToAccount(transfer.getId(), transfer.getFromAccountId());
 
         }
         else if (statusID == 3) {
