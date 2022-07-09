@@ -71,11 +71,11 @@ public class TenmoService {
         return newTransfer;
     }
 
-    public void updateTransfer(Transfer transfer) {
+    public void updateTransfer(Transfer transfer, int transferStatusID) {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
         try {
-            restTemplate.put(API_BASE_URL  + "/update/" + transfer.getId(), entity);
+            restTemplate.put(API_BASE_URL  + "/update/" + transferStatusID, entity);
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }

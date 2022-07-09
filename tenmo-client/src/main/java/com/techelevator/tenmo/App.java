@@ -146,21 +146,27 @@ public class App {
             }
 
         }
-        int pendingIDChoice = consoleService.promptForInt("Please enter transfer ID to approve/reject (0 to cancel).");
-        consoleService.printAcceptMenu();
-        int acceptTransferChoice = consoleService.promptForInt("Please choose an option: ");
+        int pendingIDChoice = consoleService.promptForInt("\nPlease enter transfer ID to approve/reject (0 to cancel): ");
+        if(pendingIDChoice != 0) {
+            consoleService.printAcceptMenu();
+            int acceptTransferChoice = consoleService.promptForInt("Please choose an option: ");
 
-        if(acceptTransferChoice == 1) {
-            tenmoService.updateTransfer(tenmoService.getTransferByID(pendingIDChoice));
+            if(acceptTransferChoice == 1) {
+                tenmoService.updateTransfer(tenmoService.getTransferByID(pendingIDChoice), 2);
+            }
+            else if(acceptTransferChoice == 2) {
+                tenmoService.updateTransfer(tenmoService.getTransferByID(pendingIDChoice), 3);
+            }
         }
+
 		
 	}
 
 	private void sendBucks() {
         listUsers();
 
-        int toUserID = consoleService.promptForInt("Please Enter a User ID");
-        BigDecimal amount = consoleService.promptForBigDecimal("Please enter the amount you would like to send");
+        int toUserID = consoleService.promptForInt("Please Enter a User ID: ");
+        BigDecimal amount = consoleService.promptForBigDecimal("Please enter the amount you would like to send: ");
         int fromAccount = tenmoService.getAccountIDFromUserID(currentUser.getUser().getId());
         int toAccount = tenmoService.getAccountIDFromUserID(toUserID);
 
@@ -172,8 +178,8 @@ public class App {
 	private void requestBucks() {
         listUsers();
 
-        int toUserID = consoleService.promptForInt("Please Enter a User ID");
-        BigDecimal amount = consoleService.promptForBigDecimal("Please enter the amount you would like to request");
+        int toUserID = consoleService.promptForInt("Please Enter a User ID: ");
+        BigDecimal amount = consoleService.promptForBigDecimal("Please enter the amount you would like to request: ");
         int fromAccount = tenmoService.getAccountIDFromUserID(currentUser.getUser().getId());
         int toAccount = tenmoService.getAccountIDFromUserID(toUserID);
 

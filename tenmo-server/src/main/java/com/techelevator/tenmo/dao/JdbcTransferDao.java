@@ -64,7 +64,8 @@ public class JdbcTransferDao implements TransferDao{
              throw new InvalidAccountException();
          }
 
-        if (validateFunds(transfer, transfer.getFromAccountId())) {
+
+        if (transfer.getTransferTypeId() == 1 || validateFunds(transfer, transfer.getFromAccountId())) {
             // create a new transfer w/ unique id in transfer table
             String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                     "VALUES (?, ?, ?, ?, ?) RETURNING transfer_id;";
@@ -78,7 +79,6 @@ public class JdbcTransferDao implements TransferDao{
             }
             return getTransfer(transferId);
         }
-        System.out.println("Insufficient funds for transfer.");
         throw new InsufficientFundsException();
 
 
@@ -86,25 +86,33 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public void updateTransfer(Transfer transfer, int transferID) throws InvalidAccountException {
+    public void updateTransfer(Transfer transfer, int statusID) throws InvalidAccountException {
 
         if (transfer.getFromAccountId() == transfer.getToAccountId()) {
             throw new InvalidAccountException();
         }
 
-        if(validateFunds(transfer, transfer.getToAccountId())) {
+        if(statusID == 2 && validateFunds(transfer, transfer.getToAccountId())) {
             transfer.setTransferStatusId(2);
             transfer.setTransferTypeId(2);
 
             String sql = "UPDATE transfer SET transfer_type_id = ?, transfer_status_id = ? " +
+                            "WHERE transfer_id = ?;";
+
+            jdbcTemplate.update(sql, transfer.getTransferTypeId(), transfer.getTransferStatusId(), transfer.getId());
+
+            updateFromAccount(transfer.getId(), transfer.getFromAccountId());
+            updateToAccount(transfer.getId(), transfer.getToAccountId());
+
+        }
+        else if (statusID == 3) {
+            transfer.setTransferStatusId(3);
+
+            String sql = "UPDATE transfer SET transfer_status_id = ? " +
                     "WHERE transfer_id = ?;";
 
-             jdbcTemplate.update(sql, transfer.getTransferTypeId(), transfer.getTransferStatusId(), transferID);
+            jdbcTemplate.update(sql, transfer.getTransferStatusId(), transfer.getId());
 
-            if(transfer.getTransferStatusId() == 2) {
-                updateFromAccount(transferID, transfer.getFromAccountId());
-                updateToAccount(transferID, transfer.getToAccountId());
-            }
         }
     }
 

@@ -110,8 +110,8 @@ public class TenmoController {
     }
 
     @RequestMapping(path = "/update/{id}", method = RequestMethod.PUT)
-    public void updateTransfer(@Valid @RequestBody Transfer transfer, @PathVariable("id") int transferID) throws InvalidAccountException {
-        transferDao.updateTransfer(transfer, transferID);
+    public void updateTransfer(@Valid @RequestBody Transfer transfer, @PathVariable("id") int statusID) throws InvalidAccountException {
+        transferDao.updateTransfer(transfer, statusID);
     }
 
 
