@@ -115,20 +115,17 @@ public class App {
         System.out.println("-------------------------------------------\n" + "Transfers\n" +"ID        From/To         Amount       Status\n" + "-------------------------------------------");
         for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
             if (transfer.getTransferStatusId() != 1) {
-                String transferStatus = "Approved";
-                if(transfer.getTransferStatusId() == 3) {
-                    transferStatus = "Rejected";
-                }
+
                 if(currentUser.getUser().getId() == tenmoService.getUserIDFromAccount(transfer.getFromAccountId())) {
                     System.out.println(transfer.getId() + "   " + "Sent to: " +
-                    tenmoService.getUserNameFromId(transfer.getToAccountId()) + "     $" +
-                    transfer.getTransferAmount() + "       " + transferStatus);
+                    tenmoService.getUserNameFromAccountId(transfer.getToAccountId()) + "     $" +
+                    transfer.getTransferAmount() + "       " + transfer.printStatusName(transfer));
 
                 }
                 else {
                     System.out.println(transfer.getId() + "   " + "Received from: " +
-                    tenmoService.getUserNameFromId(transfer.getFromAccountId()) + "     $" +
-                    transfer.getTransferAmount() + "       " + transferStatus);
+                    tenmoService.getUserNameFromAccountId(transfer.getFromAccountId()) + "     $" +
+                    transfer.getTransferAmount() + "       " + transfer.printStatusName(transfer));
                 }
             }
         }
@@ -136,15 +133,15 @@ public class App {
 
         int viewTransferChoice = consoleService.promptForInt("\nPlease enter transfer ID to view details (0 to cancel): ");
         for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
-            int fromUserId = tenmoService.getUserIDFromAccount(transfer.getFromAccountId());
-            int toUserId = tenmoService.getUserIDFromAccount(transfer.getToAccountId());
+            String fromUsername = tenmoService.getUserNameFromAccountId(transfer.getFromAccountId());
+            String toUsername = tenmoService.getUserNameFromAccountId(transfer.getToAccountId());
             if (viewTransferChoice == transfer.getId()){
                 System.out.println("-------------------------\n       Transfer Details       \n-------------------------");
                 System.out.println("ID: " + transfer.getId());
-                System.out.println("From: " + tenmoService.getUserNameFromId(fromUserId));
-                System.out.println("To: " + tenmoService.getUserNameFromId(toUserId));
-                System.out.println("Type: " + transfer.getTransferTypeId());
-                System.out.println("Status: " + transfer.getTransferStatusId());
+                System.out.println("From: " + fromUsername);
+                System.out.println("To: " + toUsername);
+                System.out.println("Type: " + transfer.printTypeName(transfer));
+                System.out.println("Status: " + transfer.printStatusName(transfer));
                 System.out.println("Amount: $" + transfer.getTransferAmount());
             }
         }
@@ -155,11 +152,11 @@ public class App {
         for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
             if (transfer.getTransferStatusId() == 1) {
                 if(currentUser.getUser().getId() == tenmoService.getUserIDFromAccount(transfer.getFromAccountId())) {
-                    System.out.println(transfer.getId() + "   " + "Receive from: " + tenmoService.getUserNameFromId(transfer.getToAccountId()) + "     $" +  transfer.getTransferAmount() + "      Pending");
+                    System.out.println(transfer.getId() + "   " + "Receive from: " + tenmoService.getUserNameFromAccountId(transfer.getToAccountId()) + "     $" +  transfer.getTransferAmount() + "      " + transfer.printStatusName(transfer));
 
                 }
                 else {
-                    System.out.println(transfer.getId() + "   " + "Send to: " + tenmoService.getUserNameFromId(transfer.getFromAccountId()) + "         $" + transfer.getTransferAmount() + "      Pending");
+                    System.out.println(transfer.getId() + "   " + "Send to: " + tenmoService.getUserNameFromAccountId(transfer.getFromAccountId()) + "         $" + transfer.getTransferAmount() + "      " + transfer.printStatusName(transfer));
                 }
             }
             else if (transfer.getTransferStatusId() != 1){

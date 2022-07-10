@@ -70,4 +70,21 @@ public class Transfer {
         this.transferStatusId = transferStatusId;
     }
 
+    public String printStatusName(Transfer transfer) {
+        if(transfer.getTransferStatusId() == 1) {
+            return "Pending";
+        }
+        else if(transfer.getTransferStatusId() == 2) {
+            return "Approved";
+        }
+        else {return "Rejected"; }
+    }
+
+    public String printTypeName(Transfer transfer) {
+        if(transfer.getTransferTypeId() == 1) {
+            return "Request";
+        }
+        else {return "Send"; }
+    }
+
 }

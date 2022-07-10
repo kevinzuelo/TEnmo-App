@@ -103,7 +103,7 @@ public class TenmoService {
         return transfers;
     }
 
-    public String getUserNameFromId(int userId) {
+    public String getUserNameFromAccountId(int userId) {
         String username = "";
         try {
             username = restTemplate.getForObject(API_BASE_URL + "users/" + userId, String.class);
@@ -132,5 +132,7 @@ public class TenmoService {
         }
         return ID;
     }
+
+
 
 }
