@@ -21,7 +21,6 @@ public class App {
     private AuthenticatedUser currentUser;
 
 
-
     public static void main(String[] args) {
         App app = new App();
         app.run();
@@ -100,36 +99,51 @@ public class App {
 	}
 
     private void listUsers() {
-        System.out.println("-------------------------------------------\n" + "Users\n" + "ID     Name\n" + "-------------------------------------------");
+        System.out.println("---------------------------------------------------------------");
+        System.out.printf("%36s", "Users\n\n");
+        System.out.printf("%25s %15s", "ID", "Name\n");
+        System.out.println("---------------------------------------------------------------");
+
         for (User user : tenmoService.listAllUsers()) {
             if(user.getUsername().equals(currentUser.getUser().getUsername())) {
                 System.out.print("");
             } else {
-                System.out.println(user.getId() + "    " + user.getUsername());
+                System.out.printf("%25d %15s", user.getId(), user.getUsername());
+                System.out.println();
             }
         }
-        System.out.println("-------------------------------------------\n");
+        System.out.println("---------------------------------------------------------------");
     }
 
 	private void viewTransferHistory() {
-        System.out.println("-------------------------------------------\n" + "Transfers\n" +"ID        From/To         Amount       Status\n" + "-------------------------------------------");
+        String sent = "Sent to: ";
+        String received = "Received from: ";
+
+
+        System.out.println("---------------------------------------------------------------");
+        System.out.printf("%36s", "Transfers\n\n");
+        System.out.printf("%-10s %16s %-12s $%-10s %10s", "ID", "From/To", "User", "Amount", "Status\n");
+        System.out.println("---------------------------------------------------------------");
+
         for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
             if (transfer.getTransferStatusId() != 1) {
 
                 if(currentUser.getUser().getId() == tenmoService.getUserIDFromAccount(transfer.getFromAccountId())) {
-                    System.out.println(transfer.getId() + "   " + "Sent to: " +
-                    tenmoService.getUserNameFromAccountId(transfer.getToAccountId()) + "     $" +
-                    transfer.getTransferAmount() + "       " + transfer.printStatusName(transfer));
+                    System.out.printf("%-10d %16s %-12s $%-10.2f %10s", transfer.getId(), sent,
+                            tenmoService.getUserNameFromAccountId(transfer.getToAccountId()),
+                            transfer.getTransferAmount(), transfer.printStatusName(transfer));
+                            System.out.println();
 
                 }
                 else {
-                    System.out.println(transfer.getId() + "   " + "Received from: " +
-                    tenmoService.getUserNameFromAccountId(transfer.getFromAccountId()) + "     $" +
-                    transfer.getTransferAmount() + "       " + transfer.printStatusName(transfer));
+                    System.out.printf("%-10d %16s %-12s $%-10.2f %10s", transfer.getId(), received,
+                            tenmoService.getUserNameFromAccountId(transfer.getFromAccountId()),
+                            transfer.getTransferAmount(), transfer.printStatusName(transfer));
+                            System.out.println();
                 }
             }
         }
-        System.out.println("---------\n");
+        System.out.println("---------------------------------------------------------------");
 
         int viewTransferChoice = consoleService.promptForInt("\nPlease enter transfer ID to view details (0 to cancel): ");
         for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
@@ -148,15 +162,26 @@ public class App {
 	}
 
 	private void viewPendingRequests() {
-        System.out.println("----------------------------------------------------\n" + "Transfers\n" +"ID          From/To            Amount      Status\n" + "----------------------------------------------------");
-        for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
+        String sent = "Sent to: ";
+        String received = "Received from: ";
+
+        System.out.println("---------------------------------------------------------------");
+        System.out.printf("%42s", "Pending Transfers\n\n");
+        System.out.printf("%-10s %16s %-12s $%-10s %10s", "ID", "From/To", "User", "Amount", "Status\n");
+        System.out.println("---------------------------------------------------------------");        for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
             if (transfer.getTransferStatusId() == 1) {
                 if(currentUser.getUser().getId() == tenmoService.getUserIDFromAccount(transfer.getFromAccountId())) {
-                    System.out.println(transfer.getId() + "   " + "Receive from: " + tenmoService.getUserNameFromAccountId(transfer.getToAccountId()) + "     $" +  transfer.getTransferAmount() + "      " + transfer.printStatusName(transfer));
 
+                    System.out.printf("%-10d %16s %-12s $%-10.2f %10s", transfer.getId(), sent,
+                            tenmoService.getUserNameFromAccountId(transfer.getToAccountId()),
+                            transfer.getTransferAmount(), transfer.printStatusName(transfer));
+                            System.out.println();
                 }
                 else {
-                    System.out.println(transfer.getId() + "   " + "Send to: " + tenmoService.getUserNameFromAccountId(transfer.getFromAccountId()) + "         $" + transfer.getTransferAmount() + "      " + transfer.printStatusName(transfer));
+                    System.out.printf("%-10d %16s %-12s $%-10.2f %10s", transfer.getId(), received,
+                            tenmoService.getUserNameFromAccountId(transfer.getFromAccountId()),
+                            transfer.getTransferAmount(), transfer.printStatusName(transfer));
+                            System.out.println();
                 }
             }
             else if (transfer.getTransferStatusId() != 1){

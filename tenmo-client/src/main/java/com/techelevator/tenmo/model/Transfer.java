@@ -13,6 +13,12 @@ public class Transfer {
     private int transferTypeId;
     private int transferStatusId = 2;
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+
     public Transfer(){}
 
     public Transfer(int toAccountId, int fromAccountId, BigDecimal transferAmount, int transferTypeId) {
@@ -72,12 +78,12 @@ public class Transfer {
 
     public String printStatusName(Transfer transfer) {
         if(transfer.getTransferStatusId() == 1) {
-            return "Pending";
+            return ANSI_BLUE + "\033[3mPending\033[0m" + ANSI_RESET;
         }
         else if(transfer.getTransferStatusId() == 2) {
-            return "Approved";
+            return ANSI_GREEN + "Approved" + ANSI_RESET;
         }
-        else {return "Rejected"; }
+        else {return ANSI_RED + "Rejected" + ANSI_RESET; }
     }
 
     public String printTypeName(Transfer transfer) {
