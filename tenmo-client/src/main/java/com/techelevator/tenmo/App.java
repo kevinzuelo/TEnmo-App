@@ -131,11 +131,23 @@ public class App {
                     transfer.getTransferAmount() + "       " + transferStatus);
                 }
             }
-
-
         }
         System.out.println("---------\n");
-		
+
+        int viewTransferChoice = consoleService.promptForInt("\nPlease enter transfer ID to view details (0 to cancel): ");
+        for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
+            int fromUserId = tenmoService.getUserIDFromAccount(transfer.getFromAccountId());
+            int toUserId = tenmoService.getUserIDFromAccount(transfer.getToAccountId());
+            if (viewTransferChoice == transfer.getId()){
+                System.out.println("-------------------------\n       Transfer Details       \n-------------------------");
+                System.out.println("ID: " + transfer.getId());
+                System.out.println("From: " + tenmoService.getUserNameFromId(fromUserId));
+                System.out.println("To: " + tenmoService.getUserNameFromId(toUserId));
+                System.out.println("Type: " + transfer.getTransferTypeId());
+                System.out.println("Status: " + transfer.getTransferStatusId());
+                System.out.println("Amount: $" + transfer.getTransferAmount());
+            }
+        }
 	}
 
 	private void viewPendingRequests() {
