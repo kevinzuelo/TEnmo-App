@@ -97,12 +97,14 @@ public class TenmoController {
         return transfers;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path = "/send", method = RequestMethod.POST)
     public void sendMoney(@Valid @RequestBody Transfer transfer) throws InvalidAccountException, InsufficientFundsException {
         transfer.setTransferStatusId(2);
         transferDao.createTransfer(transfer);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path = "/request", method = RequestMethod.POST)
     public void requestMoney(@Valid @RequestBody Transfer transfer) throws InvalidAccountException, InsufficientFundsException {
         transfer.setTransferStatusId(1);
