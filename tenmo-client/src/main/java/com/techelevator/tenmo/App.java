@@ -168,7 +168,8 @@ public class App {
         System.out.println("---------------------------------------------------------------");
         System.out.printf("%42s", "Pending Transfers\n\n");
         System.out.printf("%-10s %16s %-12s $%-10s %10s", "ID", "From/To", "User", "Amount", "Status\n");
-        System.out.println("---------------------------------------------------------------");        for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
+        System.out.println("---------------------------------------------------------------");
+        for (Transfer transfer : tenmoService.listTransferHistory(currentUser.getUser().getId())) {
             if (transfer.getTransferStatusId() == 1) {
                 if(currentUser.getUser().getId() == tenmoService.getUserIDFromAccount(transfer.getFromAccountId())) {
 
@@ -197,15 +198,18 @@ public class App {
             consoleService.printAcceptMenu();
             int acceptTransferChoice = consoleService.promptForInt("Please choose an option: ");
 
-            if(acceptTransferChoice == 1) {
-                tenmoService.updateTransfer(tenmoService.getTransferByID(pendingIDChoice), 2);
+            if(currentUser.getUser().getId() != tenmoService.getUserIDFromAccount(tenmoService.getTransferByID(pendingIDChoice).getFromAccountId())) {
+                if(acceptTransferChoice == 1) {
+                    tenmoService.updateTransfer(tenmoService.getTransferByID(pendingIDChoice), 2);
+                }
+                else if(acceptTransferChoice == 2) {
+                    tenmoService.updateTransfer(tenmoService.getTransferByID(pendingIDChoice), 3);
+                }
             }
-            else if(acceptTransferChoice == 2) {
-                tenmoService.updateTransfer(tenmoService.getTransferByID(pendingIDChoice), 3);
+            else {
+                System.out.println("You don't have permission to do this.");
             }
         }
-
-		
 	}
 
 	private void sendBucks() {
