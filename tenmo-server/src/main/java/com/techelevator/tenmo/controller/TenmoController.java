@@ -113,7 +113,7 @@ public class TenmoController {
     }
 
     @RequestMapping(path = "/update/{id}", method = RequestMethod.PUT)
-    public void updateTransfer(@Valid @RequestBody Transfer transfer, @PathVariable("id") int statusID) throws InvalidAccountException {
+    public void updateTransfer(@Valid @RequestBody Transfer transfer, @PathVariable("id") int statusID) throws InvalidAccountException, InsufficientFundsException{
         transferDao.updateTransfer(transfer, statusID);
     }
 

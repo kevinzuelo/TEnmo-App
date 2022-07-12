@@ -83,7 +83,19 @@ public class TenmoService {
         try {
             newTransfer = restTemplate.postForObject(API_BASE_URL  + "/request", entity, Transfer.class);
 
-        } catch (RestClientResponseException | ResourceAccessException e) {
+        }
+        catch (HttpServerErrorException.InternalServerError e ) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                ErrorMessage errorResponseBody = mapper.readValue(e.getResponseBodyAsString(),
+                        ErrorMessage.class);
+                System.out.println(errorResponseBody.getMessage());
+            } catch (JsonProcessingException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return newTransfer;
@@ -94,7 +106,19 @@ public class TenmoService {
         HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
         try {
             restTemplate.put(API_BASE_URL  + "/update/" + transferStatusID, entity);
-        } catch (RestClientResponseException | ResourceAccessException e) {
+        }
+        catch (HttpServerErrorException.InternalServerError e ) {
+
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                ErrorMessage errorResponseBody = mapper.readValue(e.getResponseBodyAsString(),
+                        ErrorMessage.class);
+                System.out.println(errorResponseBody.getMessage());
+            } catch (JsonProcessingException ex) {
+                ex.printStackTrace();
+            }
+
+        }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
     }

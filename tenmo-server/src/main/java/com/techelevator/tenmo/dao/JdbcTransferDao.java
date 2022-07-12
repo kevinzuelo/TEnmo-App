@@ -86,7 +86,7 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public void updateTransfer(Transfer transfer, int statusID) throws InvalidAccountException {
+    public void updateTransfer(Transfer transfer, int statusID) throws InvalidAccountException, InsufficientFundsException {
 
         if (transfer.getFromAccountId() == transfer.getToAccountId()) {
             throw new InvalidAccountException();
@@ -113,6 +113,9 @@ public class JdbcTransferDao implements TransferDao{
 
             jdbcTemplate.update(sql, transfer.getTransferStatusId(), transfer.getId());
 
+        }
+        else {
+            throw new InsufficientFundsException();
         }
     }
 
