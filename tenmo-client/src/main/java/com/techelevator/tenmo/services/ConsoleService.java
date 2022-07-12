@@ -72,7 +72,7 @@ public class ConsoleService {
             try {
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Please enter a number.");
+                System.out.print("Invalid. Please enter a valid ID: ");
             }
         }
     }

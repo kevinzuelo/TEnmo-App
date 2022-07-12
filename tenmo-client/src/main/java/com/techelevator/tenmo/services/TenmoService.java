@@ -17,6 +17,7 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TransferQueue;
@@ -66,7 +67,7 @@ public class TenmoService {
                 System.out.println(errorResponseBody.getMessage());
             } catch (JsonProcessingException ex) {
                 ex.printStackTrace();
-            }
+            } 
 
         }
         catch ( RestClientResponseException | ResourceAccessException e) {
