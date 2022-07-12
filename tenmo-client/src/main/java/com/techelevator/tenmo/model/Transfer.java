@@ -12,6 +12,7 @@ public class Transfer {
     private int fromAccountId;
     private int transferTypeId;
     private int transferStatusId = 2;
+    private String message = "";
 
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -74,6 +75,14 @@ public class Transfer {
 
     public void setTransferStatusId(int transferStatusId) {
         this.transferStatusId = transferStatusId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String printStatusName(Transfer transfer) {

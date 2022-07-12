@@ -1,5 +1,8 @@
 package com.techelevator.tenmo.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.techelevator.tenmo.model.ErrorMessage;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.util.BasicLogger;
@@ -8,6 +11,7 @@ import io.cucumber.java.sl.In;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -49,11 +53,25 @@ public class TenmoService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
         Transfer newTransfer = null;
+
         try {
            newTransfer = restTemplate.postForObject(API_BASE_URL  + "/send", entity, Transfer.class);
+        }
+        catch (HttpServerErrorException.InternalServerError e ) {
 
-        } catch (RestClientResponseException | ResourceAccessException e) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                ErrorMessage errorResponseBody = mapper.readValue(e.getResponseBodyAsString(),
+                        ErrorMessage.class);
+                System.out.println(errorResponseBody.getMessage());
+            } catch (JsonProcessingException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        catch ( RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
+
         }
         return newTransfer;
     }
