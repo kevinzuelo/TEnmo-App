@@ -216,6 +216,9 @@ public class App {
         listUsers();
 
         int toUserID = consoleService.promptForInt("Please Enter a User ID: ");
+        if(toUserID == currentUser.getUser().getId()) {
+            toUserID = consoleService.promptForInt("Please Enter a User ID other than your own: ");
+        }
         BigDecimal amount = consoleService.promptForBigDecimal("Please enter the amount you would like to send: ");
         int fromAccount = tenmoService.getAccountIDFromUserID(currentUser.getUser().getId());
         int toAccount = tenmoService.getAccountIDFromUserID(toUserID);
@@ -229,6 +232,9 @@ public class App {
         listUsers();
 
         int toUserID = consoleService.promptForInt("Please Enter a User ID: ");
+        if(toUserID == currentUser.getUser().getId()) {
+            toUserID = consoleService.promptForInt("Please Enter a User ID other than your own: ");
+        }
         BigDecimal amount = consoleService.promptForBigDecimal("Please enter the amount you would like to request: ");
         int fromAccount = tenmoService.getAccountIDFromUserID(currentUser.getUser().getId());
         int toAccount = tenmoService.getAccountIDFromUserID(toUserID);
